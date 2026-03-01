@@ -1,7 +1,7 @@
 const mqtt = require('mqtt');
 const client = mqtt.connect('mqtt://157.173.101.159:1883');
 
-const TEAM_ID = "iot_shield_2026";
+const TEAM_ID = "blink_01";
 const TOPIC_STATUS = `rfid/${TEAM_ID}/card/status`;
 
 client.on('connect', () => {

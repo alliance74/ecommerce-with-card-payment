@@ -33,7 +33,7 @@ Smart-Pay enables contactless payments and top-ups using RFID cards with a moder
 - **Immutable Ledger**: Prevents fraud and data corruption
 
 ### 5. MQTT Communication
-- **Isolated Topics**: `rfid/iot_shield_2026/card/*`
+- **Isolated Topics**: `rfid/blink_01/card/*`
 - **Device Commands**: Top-up and payment confirmations
 - **Health Monitoring**: Device status tracking
 
@@ -116,9 +116,9 @@ Smart-pay/
 └── README.md
 ```
 
-## 📝 Team ID: iot_shield_2026
+## 📝 Team ID: blink_01
 
-**Status**: Production Ready | **Updated**: February 2026
+**Status**: Production Ready | **Updated**: March 2026
 
 ### Live url
 **http://157.173.101.159:9201/**
