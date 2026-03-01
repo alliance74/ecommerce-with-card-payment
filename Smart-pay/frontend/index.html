@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart-Pay - RFID Payment System</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+
+<body>
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" class="login-screen active">
+    <div class="login-background">
+      <div class="login-shape shape-1"></div>
+      <div class="login-shape shape-2"></div>
+      <div class="login-shape shape-3"></div>
+    </div>
+    
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="logo-container">
+            <div class="logo">
+              <svg width="34" height="34" viewBox="0 0 50 50" fill="none">
+                <defs>
+                  <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#FF9900;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#FF6B00;stop-opacity:1" />
+                  </linearGradient>
+                </defs>
+                <rect width="50" height="50" rx="12" fill="url(#logoGradient)"/>
+                <path d="M15 25C15 19.48 19.48 15 25 15C30.52 15 35 19.48 35 25C35 30.52 30.52 35 25 35C19.48 35 15 30.52 15 25Z" fill="white"/>
+                <circle cx="25" cy="25" r="5" fill="url(#logoGradient)"/>
+                <path d="M25 20L27 23L30 22L28 25L30 28L27 27L25 30L23 27L20 28L22 25L20 22L23 23Z" fill="white" opacity="0.8"/>
+              </svg>
+            </div>
+            <div class="logo-text">
+              <h1>Smart-Pay</h1>
+              <p>Secure RFID Payment System</p>
+            </div>
+          </div>
+        </div>
+
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="login-username">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Username
+            </label>
+            <input type="text" id="login-username" placeholder="Enter your username" required autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Password
+            </label>
+            <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="current-password">
+          </div>
+
+          <div class="form-group">
+            <label for="login-role">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              Role
+            </label>
+            <select id="login-role" required>
+              <option value="">Select your role</option>
+              <option value="admin">👤 Admin</option>
+              <option value="customer">🛒 Customer</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-login">
+            <span>Sign In</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+
+          <div id="login-error" class="login-error"></div>
+          
+          <div class="login-hint">
+            Demo: admin/admin123 or customer/customer123
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD -->
+  <div id="dashboard-screen" class="dashboard-screen">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">
+          <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+            <rect width="40" height="40" rx="8" fill="#FF9900"/>
+            <path d="M12 20C12 15.58 15.58 12 20 12C24.42 12 28 15.58 28 20C28 24.42 24.42 28 20 28C15.58 28 12 24.42 12 20Z" fill="white"/>
+            <circle cx="20" cy="20" r="4" fill="#FF9900"/>
+          </svg>
+          <span>Smart-Pay</span>
+        </div>
+
+        <div class="navbar-center">
+          <div class="connection-badge">
+            <span id="connection-status" class="status-dot online"></span>
+            <span id="connection-text">Connected</span>
+          </div>
+        </div>
+
+        <div class="navbar-right">
+          <div class="user-info">
+            <span id="user-role-badge" class="role-badge">Admin</span>
+            <span id="user-name">User</span>
+          </div>
+          <button id="logout-btn" class="btn-logout">Logout</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="dashboard-container">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-menu">
+          <button class="menu-item active" data-section="dashboard">
+            <span class="icon">📊</span>
+            <span>Dashboard</span>
+          </button>
+          <button class="menu-item" id="admin-menu" data-section="admin" style="display: none;">
+            <span class="icon">⚙️</span>
+            <span>Admin Panel</span>
+          </button>
+          <button class="menu-item" id="customer-menu" data-section="customer" style="display: none;">
+            <span class="icon">�</span>
+            <span>Shop</span>
+          </button>
+          <button class="menu-item" data-section="history">
+            <span class="icon">📋</span>
+            <span>History</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN AREA -->
+      <main class="main-content">
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard-section" class="content-section active">
+          <div class="section-header">
+            <h1>Dashboard</h1>
+            <p>Welcome to Smart-Pay RFID Payment System</p>
+          </div>
+
+          <div class="dashboard-grid">
+            <!-- CARD STATUS -->
+            <div class="card-container">
+              <div class="card-header">
+                <h2>Card Status</h2>
+                <span class="scan-indicator">Waiting for scan...</span>
+              </div>
+              <div class="card-visual-wrapper">
+                <div id="card-visual" class="card-visual">
+                  <div class="card-top">
+                    <div class="card-chip"></div>
+                    <span class="card-type">RFID</span>
+                  </div>
+                  <div class="card-middle">
+                    <div class="card-number">**** **** **** ****</div>
+                  </div>
+                  <div class="card-bottom">
+                    <div class="card-info">
+                      <div class="card-info-item">
+                        <span class="card-label">CARD ID</span>
+                        <span id="card-uid-display" class="card-value">--</span>
+                      </div>
+                      <div class="card-info-item">
+                        <span class="card-label">BALANCE</span>
+                        <span id="card-balance-display" class="card-value">$0.00</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="status-display" class="status-content">
+                <div class="status-placeholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                  </svg>
+                  <p>Scan an RFID card to begin</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- QUICK STATS -->
+            <div class="stats-container">
+              <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-content">
+                  <span class="stat-label">Total Transactions</span>
+                  <span class="stat-value" id="stat-transactions">0</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">✓</div>
+                <div class="stat-content">
+                  <span class="stat-label">Successful</span>
+                  <span class="stat-value" id="stat-success">0</span>
+                </div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">✗</div>
+                <div class="stat-content">
+                  <span class="stat-label">Failed</span>
+                  <span class="stat-value" id="stat-failed">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADMIN SECTION -->
+        <section id="admin-section" class="content-section">
+          <div class="section-header">
+            <h1>Admin Panel</h1>
+            <p>Manage card top-ups and system settings</p>
+          </div>
+
+          <div class="admin-grid">
+            <div class="admin-card">
+              <h2>Top-Up Card</h2>
+              <div class="form-group">
+                <label for="admin-uid">Card UID</label>
+                <input type="text" id="admin-uid" placeholder="Auto-populated from scan" readonly>
+              </div>
+              <div class="form-group">
+                <label for="admin-current-balance">Current Balance</label>
+                <input type="text" id="admin-current-balance" placeholder="$0.00" readonly>
+              </div>
+              <div class="form-group">
+                <label for="admin-amount">Top-Up Amount ($)</label>
+                <input type="number" id="admin-amount" placeholder="0.00" step="0.01" min="0">
+              </div>
+              <button id="admin-topup-btn" class="btn-primary" disabled>
+                <span class="icon">➕</span> Confirm Top Up
+              </button>
+              <div id="admin-response" class="response-message"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CUSTOMER SECTION -->
+        <section id="customer-section" class="content-section">
+          <div class="section-header">
+            <h1>Shop Products</h1>
+            <p>Browse and purchase products with your RFID card</p>
+          </div>
+
+          <div class="cashier-layout">
+            <!-- PRODUCT GRID -->
+            <div class="products-section">
+              <div class="products-header">
+                <h2>Available Products</h2>
+                <div class="search-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                  </svg>
+                  <input type="text" id="product-search" placeholder="Search products...">
+                </div>
+              </div>
+              <div id="products-grid" class="products-grid">
+                <!-- Products will be dynamically loaded here -->
+              </div>
+            </div>
+
+            <!-- CART & CHECKOUT -->
+            <div class="checkout-section">
+              <div class="checkout-card">
+                <h2>Shopping Cart</h2>
+                
+                <div class="cart-info">
+                  <div class="info-row">
+                    <span class="info-label">Card UID</span>
+                    <input type="text" id="customer-uid" placeholder="Scan card" readonly>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-label">Balance</span>
+                    <input type="text" id="customer-current-balance" placeholder="$0.00" readonly>
+                  </div>
+                </div>
+
+                <div id="cart-items" class="cart-items">
+                  <div class="empty-cart">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="9" cy="21" r="1"></circle>
+                      <circle cx="20" cy="21" r="1"></circle>
+                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <p>Your cart is empty</p>
+                    <span>Select products to add to cart</span>
+                  </div>
+                </div>
+
+                <div class="cart-summary">
+                  <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="cart-subtotal">$0.00</span>
+                  </div>
+                  <div class="summary-row total">
+                    <span>Total</span>
+                    <span id="cart-total">$0.00</span>
+                  </div>
+                </div>
+
+                <button id="customer-pay-btn" class="btn-checkout" disabled>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                  </svg>
+                  <span>Complete Purchase</span>
+                </button>
+
+                <div id="customer-response" class="response-message"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HISTORY SECTION -->
+        <section id="history-section" class="content-section">
+          <div class="section-header">
+            <h1>Transaction History</h1>
+            <p>View all recent transactions</p>
+          </div>
+
+          <div class="history-container">
+            <div class="history-header">
+              <h3>Recent Transactions</h3>
+              <span id="transaction-count" class="count-badge">0</span>
+            </div>
+            <ul id="log-list" class="log-list"></ul>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
