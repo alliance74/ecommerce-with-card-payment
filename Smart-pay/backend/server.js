@@ -28,7 +28,7 @@ app.use(express.json());
 // ========================================
 // CONFIGURATION
 // ========================================
-const PORT = process.env.PORT || 9201;
+const PORT = process.env.PORT || 9206;
 const TEAM_ID = "blink_01";
 const MQTT_BROKER = "mqtt://157.173.101.159:1883";
 

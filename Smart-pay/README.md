@@ -47,11 +47,11 @@ NODE CONFIGURATION:
 - Update MONGODB_URI in database.js
 - Update MQTT_BROKER in server.js
 npm run dev
-# Runs on http://localhost:9201
+# Runs on http://localhost:9206
 ```
 
 ### Frontend
-- Open http://localhost:9201
+- Open http://localhost:9206
 - Switch between Admin and Cashier modes
 
 ### ESP8266 Firmware
@@ -121,4 +121,4 @@ Smart-pay/
 **Status**: Production Ready | **Updated**: March 2026
 
 ### Live url
-**http://157.173.101.159:9201/**
+**http://157.173.101.159:9206/**

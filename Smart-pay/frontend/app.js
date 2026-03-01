@@ -1,7 +1,7 @@
 // ========================================
 // AUTHENTICATION & STATE
 // ========================================
-const BACKEND_URL = 'http://localhost:9201';
+const BACKEND_URL = 'http://localhost:9206';
 const socket = io(BACKEND_URL);
 
 // Demo credentials
