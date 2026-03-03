@@ -1,10 +1,11 @@
 const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
-// MongoDB connection - Using local MongoDB for development
-// For production, set MONGODB_URI in .env file
+// MongoDB connection - Using MongoDB Atlas or online database
+// Set MONGODB_URI in .env file with your connection string
+// Example: MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/smartpay?retryWrites=true&w=majority
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/";
-const DB_NAME = "smartpay";
+const DB_NAME = process.env.DB_NAME || "smartpay";
 
 let client = null;
 let db = null;
